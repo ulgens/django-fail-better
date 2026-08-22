@@ -9,7 +9,7 @@
 [![ty](https://img.shields.io/badge/-ty-46EBE1?logo=ty&labelColor=555)](https://github.com/astral-sh/ty)
 [![Renovate](https://img.shields.io/badge/-renovate-308BE3?logo=renovate&labelColor=555)](https://github.com/renovatebot/renovate)
 
-[![Git Hooks](https://img.shields.io/github/actions/workflow/status/ulgens/django_fail_better/git-hooks.yml?logo=github&label=Git%20Hooks)](https://github.com/ulgens/django_fail_better/actions/workflows/git-hooks.yml)
+[![Git Hooks](https://img.shields.io/github/actions/workflow/status/ulgens/django-fail-better/git-hooks.yml?logo=github&label=Git%20Hooks)](https://github.com/ulgens/django-fail-better/actions/workflows/git-hooks.yml)
 
 </div>
 
