@@ -30,7 +30,9 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Software Development :: Testing",
 ]
-dependencies = []
+dependencies = [
+    "django>=5.2",
+]
 
 [project.urls]
 Homepage = "https://github.com/ulgens/django_fail_better"
