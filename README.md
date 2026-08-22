@@ -10,6 +10,7 @@
 [![Renovate](https://img.shields.io/badge/-renovate-308BE3?logo=renovate&labelColor=555)](https://github.com/renovatebot/renovate)
 
 [![Git Hooks](https://img.shields.io/github/actions/workflow/status/ulgens/django-fail-better/git-hooks.yml?logo=github&label=Git%20Hooks)](https://github.com/ulgens/django-fail-better/actions/workflows/git-hooks.yml)
+[![Tests](https://img.shields.io/github/actions/workflow/status/ulgens/django-fail-better/tests.yml?logo=github&label=Tests)](https://github.com/ulgens/django-fail-better/actions/workflows/tests.yml)
 
 </div>
 
