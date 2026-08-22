@@ -35,9 +35,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/ulgens/django_fail_better"
-Source = "https://github.com/ulgens/django_fail_better"
-Issues = "https://github.com/ulgens/django_fail_better/issues"
+Homepage = "https://github.com/ulgens/django-fail-better"
+Source = "https://github.com/ulgens/django-fail-better"
+Issues = "https://github.com/ulgens/django-fail-better/issues"
 
 [dependency-groups]
 dev = [
