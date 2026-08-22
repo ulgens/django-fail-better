@@ -3,6 +3,7 @@
 # django-fail-better
 
 [![Python](https://img.shields.io/badge/python->=3.12,<3.16-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Django](https://img.shields.io/badge/django->=5.2,<6.2-092E20?&logo=django&logoColor=white)](https://www.djangoproject.com/)
 [![uv](https://img.shields.io/badge/-uv-DE5FE9?logo=uv&labelColor=555)](https://github.com/astral-sh/uv)
 [![prek](https://img.shields.io/badge/-prek-F54327?logo=prek&labelColor=555)](https://github.com/j178/prek)
 [![Ruff](https://img.shields.io/badge/-ruff-D7FF64?logo=ruff&labelColor=555)](https://github.com/astral-sh/ruff)
