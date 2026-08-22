@@ -4,7 +4,6 @@ requires = [ "hatchling" ]
 
 [project]
 name = "django-fail-better"
-version = "0.1.0"
 description = """\
     A drop-in TEST_RUNNER for Django's manage.py test that brings pytest-style workflow features to the native Django \
     test runner. No pytest migration required.\
@@ -30,6 +29,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Software Development :: Testing",
 ]
+dynamic = [ "version" ]
 dependencies = [
     "django>=5.2",
 ]
@@ -55,6 +55,9 @@ pytest = [
     "pytest-randomly==4.1.0",
     "pytest-xdist==3.8.0",
 ]
+
+[tool.hatch.version]
+path = "src/django_fail_better/__init__.py"
 
 [tool.uv]
 # The earliest version that supports the current lock file revision
