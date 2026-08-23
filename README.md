@@ -17,6 +17,16 @@
 
 A drop-in TEST_RUNNER for Django's manage.py test that brings pytest-style workflow features to the native Django test runner. No pytest migration required.
 
+---
+
+## Rationale
+
+Teams that want `--last-failed`, `--maxfail`, or `--failed-first` currently must either migrate to `pytest-django` or implement these themselves. This runner fills that gap: set `TEST_RUNNER` once and get the workflow you'd expect from pytest, without leaving `manage.py test`.
+
+No existing PyPI package provides these features as a `DiscoverRunner` subclass.
+
+---
+
 ## Installation
 
 ```bash
@@ -26,7 +36,7 @@ pip install django_fail_better
 Or with [uv](https://docs.astral.sh/uv/):
 
 ```bash
-uv pip install django_fail_better
+uv add django_fail_better
 ```
 
 ## Usage
@@ -40,3 +50,20 @@ TEST_RUNNER = "django_fail_better.FailBetterRunner"
 # CLI
 python manage.py test --lf --maxfail=3
 ```
+
+### CLI Options
+
+| Flag                        | Short       | Description                                                    |
+|-----------------------------|-------------|----------------------------------------------------------------|
+| `--last-failed`             | `--lf`      | Only run tests that failed the last time                       |
+| `--failed-first`            | `--ff`      | Run failed tests first, then the rest                          |
+| `--last-failed-no-failures` | `--lfnf`    | What to do when `--last-failed` has no cache (`all` or `none`) |
+| `--maxfail`                 |             | Stop after N failures (0 means never stop)                     |
+| `--cache-show`              |             | Show the contents of the last-failed cache                     |
+| `--cache-clear`             |             | Clear the last-failed cache before running                     |
+| `--stepwise`                | `--sw`      | Stop at first failure and resume from it on the next run       |
+| `--stepwise-skip`           | `--skip-sw` | Ignore the stepwise cache and run all tests                    |
+
+---
+
+_Test again, fail better!_
