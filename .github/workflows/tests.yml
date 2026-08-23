@@ -48,6 +48,10 @@ jobs:
         uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d  # v10.0.1
         with:
           enable-cache: true
+          # Without the Django suffix, Django tests with same Python causes their caches to overlap.args:
+          # TODO:
+          #   cache-key / cache-suffix / restore-keys need to be revisited
+          #   https://github.com/ulgens/django-fail-better/issues/5
           cache-suffix: django-${{ matrix.django-version }}
           python-version: ${{ matrix.python-version }}
           version: ${{ env.UV_VERSION }}
