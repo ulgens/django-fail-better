@@ -36,7 +36,3 @@ from django_fail_better import __version__
 
 print(__version__)
 ```
-
-## Contribution
-- Install git hooks with `prek install` and ensure your changes pass the checks before creating a pull request.
-  - After `prek install`, git hooks will be automatically run while committing. To manually run the checks, use `prek run`.

@@ -1,0 +1,3 @@
+- Install git hooks with `prek install`
+- After the installation, git hooks will be automatically run while committing. To manually run the checks, use `prek run` or `prek run --all-files`.
+- Ensure your commits pass the checks before creating a pull request.
