@@ -40,13 +40,3 @@ print(__version__)
 ## Contribution
 - Install git hooks with `prek install` and ensure your changes pass the checks before creating a pull request.
   - After `prek install`, git hooks will be automatically run while committing. To manually run the checks, use `prek run`.
-
-## Updating the project template
-
-This project was generated from a [Copier](https://copier.readthedocs.io/) template. To pull in the latest changes from the template:
-
-```bash
-copier update --trust
-```
-
-Resolve any conflicts if prompted. See the [python-anything](https://github.com/ulgens/python-anything) repository for template changelog and details.
