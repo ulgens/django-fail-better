@@ -32,7 +32,11 @@ uv pip install django_fail_better
 ## Usage
 
 ```python
-from django_fail_better import __version__
+# settings.py
+TEST_RUNNER = "django_fail_better.FailBetterRunner"
+```
 
-print(__version__)
+```bash
+# CLI
+python manage.py test --lf --maxfail=3
 ```
