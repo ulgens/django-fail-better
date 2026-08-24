@@ -50,3 +50,7 @@ copier update --trust
 ```
 
 Resolve any conflicts if prompted. See the [python-anything](https://github.com/ulgens/python-anything) repository for template changelog and details.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
