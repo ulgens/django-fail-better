@@ -1,9 +1,24 @@
+import json
+from pathlib import Path
+
+from django.conf import settings
 from django.test.runner import DiscoverRunner
+
+from .result_classes import MaxFailResult
 
 
 class FailBetterRunner(DiscoverRunner):
     # TODO: Can this be replaced with inf?
     max_fail_default: int = 0
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # TODO: Do we want to handle args at class level so they can be overridden by children?
+
+        base_dir = getattr(settings, "BASE_DIR", Path.cwd())
+        self.cache_dir = Path(base_dir) / ".cache" / "fail_better"
+        self.last_failed_file = self.cache_dir / "last_failed.json"
 
     @classmethod
     def add_arguments(cls, parser):
@@ -77,5 +92,41 @@ class FailBetterRunner(DiscoverRunner):
             default=False,
             help="Resets stepwise state, restarting the stepwise workflow. Implicitly enables --stepwise.",
         )
+
+        def save_last_failed(self, test_ids):
+            self.cache_dir.mkdir(parents=True, exist_ok=True)
+
+            with self.last_failed_file.open("w") as f:
+                json.dump(sorted(test_ids), f)
+
+        def load_last_failed(self):
+            if not self.last_failed_file.exists():
+                return None
+
+            try:
+                with self.last_failed_file.open() as f:
+                    return set(json.load(f))
+            except (OSError, ValueError):
+                return None
+
+        def build_suite(self, test_labels=None, **kwargs):
+            ...
+
+            suite = super().build_suite(test_labels=test_labels, **kwargs)
+
+            last_failed = self.load_last_failed()
+
+            # TODO: Handle --lfnf
+            if self.last_failed:
+                all_tests = list(suite)
+                failed = [t for t in all_tests if t.id() in last_failed]
+                suite = self.test_suite(failed)
+
+            ...
+
+            return suite
+
+        def get_resultclass(self):
+            return MaxFailResult
 
         def run_tests(tests, *args, **kwargs): ...
