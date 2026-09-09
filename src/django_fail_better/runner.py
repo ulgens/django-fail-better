@@ -6,7 +6,7 @@ from django.conf import settings
 from django.test.runner import DiscoverRunner
 from django.test.utils import iter_test_cases
 
-from .result_classes import MaxFailResult
+from .result_classes import MaxFailResult, StepwiseResultMixin
 
 
 class FailBetterRunner(DiscoverRunner):
@@ -25,9 +25,17 @@ class FailBetterRunner(DiscoverRunner):
         self.cache_clear = kwargs.get("failure_cache_clear", False)
         self.max_fail = kwargs.get("max_fail", self.max_fail_default)
 
+        self.stepwise = kwargs.get("stepwise", False)
+        self.stepwise_skip = kwargs.get("stepwise_skip", False)
+        self.stepwise_reset = kwargs.get("stepwise_reset", False)
+
+        if self.stepwise_skip or self.stepwise_reset:
+            self.stepwise = True
+
         base_dir = getattr(settings, "BASE_DIR", Path.cwd())
         self.cache_dir = Path(base_dir) / ".cache" / "fail_better"
         self.last_failed_file = self.cache_dir / "last_failed.json"
+        self.stepwise_file = self.cache_dir / "stepwise.json"
 
     @classmethod
     def add_arguments(cls, parser):
@@ -118,8 +126,34 @@ class FailBetterRunner(DiscoverRunner):
         except (OSError, ValueError):
             return None
 
+    def save_stepwise(self, test_id=None):
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
+
+        with self.stepwise_file.open("w") as f:
+            json.dump(test_id, f)
+
+    def load_stepwise(self):
+        if not self.stepwise_file.exists():
+            return None
+
+        try:
+            with self.stepwise_file.open() as f:
+                return json.load(f)
+        except (OSError, ValueError):
+            return None
+
     def get_resultclass(self):
         result_class = super().get_resultclass() or unittest.TextTestResult
+
+        if self.stepwise:
+            return type(
+                "StepwiseResult",
+                (StepwiseResultMixin, result_class),
+                {
+                    "resume": self.load_stepwise(),
+                    "keep_on_fail": self.stepwise_skip,
+                },
+            )
 
         if not self.max_fail:
             return result_class
@@ -132,6 +166,9 @@ class FailBetterRunner(DiscoverRunner):
 
     def build_suite(self, test_labels=None, **kwargs):
         suite = super().build_suite(test_labels=test_labels, **kwargs)
+
+        if self.stepwise:
+            return self._build_stepwise_suite(suite)
 
         if not self.last_failed and not self.failed_first:
             return suite
@@ -159,6 +196,23 @@ class FailBetterRunner(DiscoverRunner):
         remaining = [t for t in all_tests if t not in failed]
         return self.test_suite(failed + remaining)
 
+    def _build_stepwise_suite(self, suite):
+        resume = self.load_stepwise()
+
+        if not resume:
+            return suite
+
+        all_tests = list(iter_test_cases(suite))
+        test_ids = [t.id() for t in all_tests]
+
+        if resume not in test_ids:
+            self.log("Stepwise resume point not found, running all tests")
+            return suite
+
+        start = test_ids.index(resume)
+        self.log(f"Resuming from {resume}")
+        return self.test_suite(all_tests[start:])
+
     @staticmethod
     def _collect_failed_ids(result):
         failed = [test for test, _ in result.failures + result.errors]
@@ -170,6 +224,9 @@ class FailBetterRunner(DiscoverRunner):
         result = super().run_suite(suite, **kwargs)
         self.save_last_failed(self._collect_failed_ids(result))
 
+        if self.stepwise:
+            self.save_stepwise(getattr(result, "resume", None))
+
         return result
 
     def run_tests(self, test_labels, **kwargs):
@@ -180,6 +237,10 @@ class FailBetterRunner(DiscoverRunner):
         if self.cache_clear:
             self.cache_dir.mkdir(parents=True, exist_ok=True)
             self.save_last_failed([])
+            self.save_stepwise()
+
+        if self.stepwise_reset:
+            self.save_stepwise()
 
         if self.last_failed and self.last_failed_no_failures == "none" and not self.load_last_failed():
             self.log("No previously failed tests found, skipping test run")

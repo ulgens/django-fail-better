@@ -35,3 +35,28 @@ class MaxFailResult(unittest.TextTestResult):
         super().addUnexpectedSuccess(test)
 
         self.incr_failure_count()
+
+
+class StepwiseResultMixin(unittest.TextTestResult):
+    resume = None
+    keep_on_fail = False
+
+    def _stepwise_failure(self, test):
+        if self.keep_on_fail and test.id() == self.resume:
+            self.resume = None
+            return
+
+        self.resume = test.id()
+        self.shouldStop = True
+
+    @override
+    def addFailure(self, test, err):
+        super().addFailure(test, err)
+
+        self._stepwise_failure(test)
+
+    @override
+    def addError(self, test, err):
+        super().addError(test, err)
+
+        self._stepwise_failure(test)
