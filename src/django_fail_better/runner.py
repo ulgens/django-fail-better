@@ -19,6 +19,7 @@ class FailBetterRunner(DiscoverRunner):
         # TODO: Do we want to handle args at class level so they can be overridden by children?
 
         self.last_failed = kwargs.get("last_failed", False)
+        self.last_failed_no_failures = kwargs.get("last_failed_no_failures", "all")
         self.cache_show = kwargs.get("failure_cache_show", False)
         self.cache_clear = kwargs.get("failure_cache_clear", False)
         self.max_fail = kwargs.get("max_fail", self.max_fail_default)
@@ -173,6 +174,10 @@ class FailBetterRunner(DiscoverRunner):
         if self.cache_clear:
             self.cache_dir.mkdir(parents=True, exist_ok=True)
             self.save_last_failed([])
+
+        if self.last_failed and self.last_failed_no_failures == "none" and not self.load_last_failed():
+            self.log("No previously failed tests found, skipping test run")
+            return 0
 
         return super().run_tests(test_labels, **kwargs)
 
