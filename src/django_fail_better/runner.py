@@ -1,9 +1,12 @@
 import json
+import unittest
 from pathlib import Path
 
 from django.conf import settings
 from django.test.runner import DiscoverRunner
 from django.test.utils import iter_test_cases
+
+from .result_classes import MaxFailResult
 
 
 class FailBetterRunner(DiscoverRunner):
@@ -18,6 +21,7 @@ class FailBetterRunner(DiscoverRunner):
         self.last_failed = kwargs.get("last_failed", False)
         self.cache_show = kwargs.get("failure_cache_show", False)
         self.cache_clear = kwargs.get("failure_cache_clear", False)
+        self.max_fail = kwargs.get("max_fail", self.max_fail_default)
 
         base_dir = getattr(settings, "BASE_DIR", Path.cwd())
         self.cache_dir = Path(base_dir) / ".cache" / "fail_better"
@@ -111,6 +115,18 @@ class FailBetterRunner(DiscoverRunner):
                 return set(json.load(f))
         except (OSError, ValueError):
             return None
+
+    def get_resultclass(self):
+        result_class = super().get_resultclass() or unittest.TextTestResult
+
+        if not self.max_fail:
+            return result_class
+
+        return lambda *args, **kwargs: MaxFailResult(
+            *args,
+            max_fail=self.max_fail,
+            **kwargs,
+        )
 
     def build_suite(self, test_labels=None, **kwargs):
         suite = super().build_suite(test_labels=test_labels, **kwargs)
