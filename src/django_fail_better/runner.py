@@ -42,17 +42,17 @@ class FailBetterRunner(DiscoverRunner):
 
         # Cache
         parser.add_argument(
-            "--cache-show",
+            "--failure-cache-show",
             action="store_true",
             default=False,
             # TODO: Do I want to add "glob"? (check pytest help text)
-            help=" Show cache contents, don't perform collection or tests.",
+            help="Show failure cache contents, don't perform collection or tests.",
         )
         parser.add_argument(
-            "--cache-clear",
+            "--failure-cache-clear",
             action="store_true",
             default=False,
-            help="Remove all cache contents at start of test run",
+            help="Remove all failure cache contents at start of test run.",
         )
 
         # Stepwise
