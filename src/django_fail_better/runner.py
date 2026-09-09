@@ -20,6 +20,7 @@ class FailBetterRunner(DiscoverRunner):
 
         self.last_failed = kwargs.get("last_failed", False)
         self.last_failed_no_failures = kwargs.get("last_failed_no_failures", "all")
+        self.failed_first = kwargs.get("failed_first", False)
         self.cache_show = kwargs.get("failure_cache_show", False)
         self.cache_clear = kwargs.get("failure_cache_clear", False)
         self.max_fail = kwargs.get("max_fail", self.max_fail_default)
@@ -132,7 +133,7 @@ class FailBetterRunner(DiscoverRunner):
     def build_suite(self, test_labels=None, **kwargs):
         suite = super().build_suite(test_labels=test_labels, **kwargs)
 
-        if not self.last_failed:
+        if not self.last_failed and not self.failed_first:
             return suite
 
         last_failed = self.load_last_failed()
@@ -150,8 +151,13 @@ class FailBetterRunner(DiscoverRunner):
             self.log("No previously failed tests found, running all tests")
             return suite
 
-        self.log(f"Running {len(failed)} previously failed test(s)")
-        return self.test_suite(failed)
+        if self.last_failed:
+            self.log(f"Running {len(failed)} previously failed test(s)")
+            return self.test_suite(failed)
+
+        self.log(f"Running {len(failed)} previously failed test(s) first")
+        remaining = [t for t in all_tests if t not in failed]
+        return self.test_suite(failed + remaining)
 
     @staticmethod
     def _collect_failed_ids(result):
