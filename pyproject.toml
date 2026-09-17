@@ -41,10 +41,10 @@ Issues = "https://github.com/ulgens/django-fail-better/issues"
 
 [dependency-groups]
 dev = [
-    "copier==9.17.2",
+    "copier==9.18.2",
     "copier-template-extensions==0.3.3",
     "ipdb==0.13.13",
-    "ipython==9.16.1",
+    "ipython==9.17.1",
     # Having ruff in the venv helps with IDE's auto lint/format integrations
     "ruff==0.16.4",
     "ty==0.0.73",
